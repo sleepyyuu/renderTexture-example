@@ -1,2 +1,2 @@
-# infinite-gates
+# renderTexture-example
  

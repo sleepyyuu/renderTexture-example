@@ -1,12 +1,12 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Preload, Html, Environment, Cloud } from '@react-three/drei'
-import Gates from './Background/Gates'
-import Clouds from './Background/Clouds'
-import Sparklers from './Background/Sparklers'
 import { useState } from 'react'
+import TextManager from './Text/TextManager'
 
 export default function Scene({ children, ...props }) {
   const [initialTransition, setInitialTransition] = useState(false)
+
+  //start by just creating text that scrolls from right to left then experiment with text shaders + motion
 
   // Everything defined in here will persist between route changes, only children are swapped
   return (
@@ -17,7 +17,6 @@ export default function Scene({ children, ...props }) {
       {children}
       <Preload all />
       <Environment preset={'night'}></Environment>
-      <fog attach='fog' color='#18181b' near={12} far={69} />
       <color attach='background' args={['#18181b']} />
       {initialTransition ? null : (
         <Html>
@@ -30,11 +29,8 @@ export default function Scene({ children, ...props }) {
           </div>
         </Html>
       )}
-
+      <TextManager initialTransition={initialTransition}></TextManager>
       <OrbitControls />
-      <Clouds initialTransition={initialTransition}></Clouds>
-      <Gates initialTransition={initialTransition}></Gates>
-      {/* <Sparklers initialTransition={initialTransition}></Sparklers> */}
     </Canvas>
   )
 }

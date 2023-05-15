@@ -1,20 +1,22 @@
 import { useSpring, animated } from '@react-spring/three'
-import { useRef } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import { Text } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 
 export default function TextManager(props) {
   const { initialTransition } = props
-  const startingXPosition = 8
-  const { groupPosition } = useSpring({ groupPosition: initialTransition ? [4, 0, 0] : [startingXPosition, 0, 0] })
+  const { viewport } = useThree()
+  const startingXPosition = viewport.width / 2
+  const { groupPosition } = useSpring({ groupPosition: initialTransition ? [0, 0, 0] : [startingXPosition, 0, 0] })
 
   return (
     <animated.group position={groupPosition}>
       <group position={[0, 2, -4]}>
-        <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition}></TextLine>
+        {/* startingXposition is 1.(z position) + .2 */}
+        <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition * (4 * 0.6)}></TextLine>
       </group>
       <group position={[0, -2, -2]}>
-        <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition}></TextLine>
+        <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition * (2 * 0.8)}></TextLine>
       </group>
       <group position={[0, 0, 0]}>
         <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition}></TextLine>
@@ -28,12 +30,17 @@ function TextLine({ initialTransition, startingXPosition }) {
 
   useFrame((state, delta) => {
     if (initialTransition) {
-      lineRef.current.position.x -= delta
-      if (lineRef.current.position.x < -8) {
-        lineRef.current.position.x = startingXPosition
+      lineRef.current.position.x -= delta * 2
+      if (lineRef.current.position.x < -startingXPosition - lineRef.current.children[0].geometry.boundingBox.max.x) {
+        lineRef.current.position.x = startingXPosition + lineRef.current.children[0].geometry.boundingBox.max.x
       }
     }
   })
+
+  useLayoutEffect(() => {
+    lineRef.current.children[0].geometry.computeBoundingBox()
+    lineRef.current.position.x = startingXPosition + lineRef.current.children[0].geometry.boundingBox.max.x
+  }, [])
 
   return (
     <group ref={lineRef}>

@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Preload, Html, Environment, Cloud } from '@react-three/drei'
+import { OrbitControls, Preload, Html, Environment, Cloud, OrthographicCamera } from '@react-three/drei'
 import { useState } from 'react'
 import TextManager from './Text/TextManager'
 
@@ -12,7 +12,7 @@ export default function Scene({ children, ...props }) {
   return (
     <Canvas {...props}>
       {/* <directionalLight intensity={0.1} /> */}
-      <ambientLight intensity={0.6} color={'#121db8'} />
+      <ambientLight intensity={0.6} />
       <ambientLight intensity={0.15} />
       {children}
       <Preload all />

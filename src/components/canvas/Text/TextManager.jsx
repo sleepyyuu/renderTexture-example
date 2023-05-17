@@ -1,16 +1,19 @@
 import { useSpring, animated } from '@react-spring/three'
 import { useRef, useLayoutEffect } from 'react'
-import { Text } from '@react-three/drei'
+import { Text, useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
 export default function TextManager(props) {
   const { initialTransition } = props
   const { viewport } = useThree()
   const startingXPosition = viewport.width / 2
-  const { groupPosition } = useSpring({ groupPosition: initialTransition ? [0, 0, 0] : [startingXPosition, 0, 0] })
+  const { groupPosition } = useSpring({ groupPosition: initialTransition ? [-3, 0, 0] : [startingXPosition, 0, 0] })
 
+  const gltf = useGLTF('./models/housejoined.glb')
+  console.log(gltf)
   return (
     <animated.group position={groupPosition}>
+      <primitive object={gltf.scene}></primitive>
       <group position={[0, 2, -4]}>
         {/* startingXposition is 1.(z position) + .2 */}
         <TextLine initialTransition={initialTransition} startingXPosition={startingXPosition * (4 * 0.6)}></TextLine>
@@ -41,6 +44,9 @@ function TextLine({ initialTransition, startingXPosition }) {
     lineRef.current.children[0].geometry.computeBoundingBox()
     lineRef.current.position.x = startingXPosition + lineRef.current.children[0].geometry.boundingBox.max.x
   }, [])
+
+  //return textshader here
+  //hard part will be aligning timing of uniformTime 0-4 to match speed of moving text
 
   return (
     <group ref={lineRef}>
